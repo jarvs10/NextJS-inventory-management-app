@@ -2,7 +2,13 @@ import ProductsChart from "@/components/products-chart";
 import Sidebar from "@/components/sidebar";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { TrendingUp } from "lucide-react";
+import { 
+  TrendingUp, 
+  Package, 
+  AlertCircle, 
+  CheckCircle2,
+  Clock
+} from "lucide-react";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -77,180 +83,155 @@ export default async function DashboardPage() {
     take: 5,
   });
 
-  console.log(totalValue);
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50/50">
       <Sidebar currentPath="/dashboard" />
-      <main className="ml-64 p-8">
+      <main className="ml-64 p-8 space-y-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900">
-                Dashboard
-              </h1>
-              <p className="text-sm text-gray-500">
-                Welcome back! Here is an overview of your inventory.
-              </p>
+        <div className="flex flex-col gap-1">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            Dashboard
+          </h1>
+          <p className="text-gray-500">
+            Overview of your inventory performance and metrics.
+          </p>
+        </div>
+
+        {/* Key Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between pb-4">
+              <h3 className="text-sm font-medium text-gray-500">Total Value</h3>
+              <div className="p-2 bg-green-50 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-green-600" />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-3xl font-bold text-gray-900">
+                ${totalValue.toLocaleString()}
+              </span>
+              <span className="text-xs text-green-600 font-medium mt-1">
+                Asset Valuation
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between pb-4">
+              <h3 className="text-sm font-medium text-gray-500">Total Products</h3>
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <Package className="h-5 w-5 text-blue-600" />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-3xl font-bold text-gray-900">
+                {totalProducts}
+              </span>
+              <span className="text-xs text-gray-500 mt-1">
+                In your inventory
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between pb-4">
+              <h3 className="text-sm font-medium text-gray-500">Low Stock</h3>
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-orange-600" />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-3xl font-bold text-gray-900">
+                {lowStockCount}
+              </span>
+              <span className="text-xs text-orange-600 font-medium mt-1">
+                {lowStockPercentage}% below threshold
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between pb-4">
+              <h3 className="text-sm font-medium text-gray-500">In Stock</h3>
+              <div className="p-2 bg-indigo-50 rounded-lg">
+                <CheckCircle2 className="h-5 w-5 text-indigo-600" />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-3xl font-bold text-gray-900">
+                {inStockCount}
+              </span>
+              <span className="text-xs text-gray-500 mt-1">
+                Available for sale ({inStockPercentage}%)
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Key Metrics */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">
-              Key Metrics
-            </h2>
-            <div className="grid grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900">
-                  {totalProducts}
-                </div>
-                <div className="text-sm text-gray-600">Total Products</div>
-                <div className="flex items-center justify-center mt-1">
-                  <span className="text-xs text-green-600">
-                    +{totalProducts}
-                  </span>
-                  <TrendingUp className="w-3 h-3 text-green-600 ml-1" />
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900">
-                  ${Number(totalValue).toFixed(0)}
-                </div>
-                <div className="text-sm text-gray-600">Total Value</div>
-                <div className="flex items-center justify-center mt-1">
-                  <span className="text-xs text-green-600">
-                    +${Number(totalValue).toFixed(0)}
-                  </span>
-                  <TrendingUp className="w-3 h-3 text-green-600 ml-1" />
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900">
-                  {lowStock}
-                </div>
-                <div className="text-sm text-gray-600">Low Stock</div>
-                <div className="flex items-center justify-center mt-1">
-                  <span className="text-xs text-green-600">+{lowStock}</span>
-                  <TrendingUp className="w-3 h-3 text-green-600 ml-1" />
-                </div>
-              </div>
+        {/* Charts & Recent Activity */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Product Trends
+              </h3>
+              <p className="text-sm text-gray-500">
+                New products added over time
+              </p>
             </div>
-          </div>
-
-          {/* Iventory over time */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2>New products per week</h2>
-            </div>
-            <div className="h-48">
+            <div className="h-[300px]">
               <ProductsChart data={weeklyProductsData} />
             </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Stock Levels */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm h-full">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Stock Levels
-              </h2>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Recent Products
+              </h3>
+              <Clock className="h-4 w-4 text-gray-400" />
             </div>
-            <div className="space-y-3">
-              {recent.map((product, key) => {
-                const stockLevel =
-                  product.quantity === 0
-                    ? 0
-                    : product.quantity <= (product.lowStockAt || 5)
-                    ? 1
-                    : 2;
-
-                const bgColors = [
-                  "bg-red-600",
-                  "bg-yellow-600",
-                  "bg-green-600",
-                ];
-                const textColors = [
-                  "text-red-600",
-                  "text-yellow-600",
-                  "text-green-600",
-                ];
-                return (
-                  <div
-                    key={key}
-                    className="flex items-center justify-between p-3 rounded-lg bg-gray-50"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-3 h-3 rounded-full ${bgColors[stockLevel]}`}
-                      />
-                      <span className="text-sm font-medium text-gray-900">
-                        {product.name}
-                      </span>
-                    </div>
-                    <div
-                      className={`text-sm font-medium ${textColors[stockLevel]}`}
-                    >
-                      {product.quantity} units
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Efficiency */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Efficiency
-              </h2>
-            </div>
-            <div className="flex items-center justify-center">
-              <div className="relative w-48 h-48">
-                <div className="absolute inset-0 rounded-full border-8 border-gray-200"></div>
+            <div className="space-y-4">
+              {recent.map((product) => {
+                 const isLowStock = Number(product.quantity) <= (product.lowStockAt || 5);
+                 const outOfStock = Number(product.quantity) === 0;
+                 
+                 return (
                 <div
-                  className="absolute inset-0 rounded-full border-8 border-purple-600"
-                  style={{
-                    clipPath:
-                      "polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 50%)",
-                  }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-900">
-                      {inStockPercentage}%
-                    </div>
-                    <div className="text-sm text-gray-600">In Stock</div>
+                  key={product.id}
+                  className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex flex-col">
+                    <span className="font-medium text-gray-900 truncate max-w-[120px]">
+                      {product.name}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      Added {new Date(product.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-900">
+                      ${Number(product.price).toFixed(2)}
+                    </p>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        outOfStock
+                          ? "bg-red-100 text-red-700"
+                          : isLowStock
+                          ? "bg-orange-100 text-orange-700"
+                          : "bg-emerald-100 text-emerald-700"
+                      }`}
+                    >
+                      {Number(product.quantity)} units
+                    </span>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="mt-6 space-y-2">
-              <div className="flex items-center justify-between text-sm text-gray-600">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-purple-200" />
-                  <span>In Stock ({inStockPercentage}%)</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between text-sm text-gray-600">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-purple-600" />
-                  <span>Low Stock ({lowStockPercentage}%)</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between text-sm text-gray-600">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-gray-200" />
-                  <span>Out of Stock ({outOfStockPercentage}%)</span>
-                </div>
-              </div>
+              )})}
+              {recent.length === 0 && (
+                <p className="text-center text-gray-500 py-4">
+                  No recent products found.
+                </p>
+              )}
             </div>
           </div>
         </div>
